@@ -32,17 +32,7 @@ tunnelListener = () => {
   });
 
   tunnelServer.on('connection', socket => {
-    let buffer = Buffer.from([]);
-
-    socket.on('data', chunk => {
-      buffer = Buffer.concat([buffer, chunk]);
-    });
-
-    socket.on('end', () => {
-      console.log(buffer.toString());
-      //console.log(https.parseHeader(buffer));
-      return;
-      /*
+    socket.on('data', buffer => {
       let httpInfo = httpParse(buffer);
       if (!httpInfo.httpVersion) {
         console.log(https.parseHeader(buffer));
@@ -90,7 +80,6 @@ tunnelListener = () => {
           socket.destroy();
         }
       }
-      */
     })
 
   })
