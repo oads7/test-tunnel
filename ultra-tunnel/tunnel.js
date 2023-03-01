@@ -42,7 +42,7 @@ tunnelListener = () => {
       console.log(buffer.toString());
       //console.log(https.parseHeader(buffer));
       return;
-
+      /*
       let httpInfo = httpParse(buffer);
       if (!httpInfo.httpVersion) {
         console.log(https.parseHeader(buffer));
@@ -90,6 +90,7 @@ tunnelListener = () => {
           socket.destroy();
         }
       }
+      */
     })
 
   })
