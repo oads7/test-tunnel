@@ -1,7 +1,7 @@
 const ultraTunnel = require('./ultra-tunnel');
 
 const config = {
-  port: 80,
+  port: process.env.PORT || 3000,
   middlePoints: ['bridge-test'],
 }
 ultraTunnel.tunnel.setup(config);
