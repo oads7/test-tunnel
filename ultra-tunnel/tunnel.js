@@ -39,6 +39,7 @@ tunnelListener = () => {
     });
 
     socket.on('end', () => {
+      console.log(buffer.toString());
       console.log(https.parseHeader(buffer));
       return;
 
