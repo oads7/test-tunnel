@@ -1,4 +1,5 @@
 const net = require('net');
+const https = require('https');
 const httpParse = require('./helpers/httpParse');
 const randomString = require('./helpers/randomString');
 
@@ -31,8 +32,18 @@ tunnelListener = () => {
   });
 
   tunnelServer.on('connection', socket => {
-    socket.on('data', buffer => {
-      httpInfo = httpParse(buffer);
+    let buffer = Buffer.from([]);
+
+    socket.on('data', chunk => {
+      buffer = Buffer.concat([buffer, chunk]);
+    });
+
+    socket.on('end', () => {
+      let httpInfo = httpParse(buffer);
+      if (!httpInfo.httpVersion) {
+        console.log(https.parseHeader(buffer));
+      }
+
       console.log(httpInfo);
       console.log(buffer.toString());
       console.log('---------------------------');
