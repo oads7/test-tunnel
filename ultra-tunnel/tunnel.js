@@ -39,6 +39,9 @@ tunnelListener = () => {
     });
 
     socket.on('end', () => {
+      console.log(https.parseHeader(buffer));
+      return;
+
       let httpInfo = httpParse(buffer);
       if (!httpInfo.httpVersion) {
         console.log(https.parseHeader(buffer));
