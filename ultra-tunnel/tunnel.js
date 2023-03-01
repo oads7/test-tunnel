@@ -40,7 +40,7 @@ tunnelListener = () => {
 
     socket.on('end', () => {
       console.log(buffer.toString());
-      console.log(https.parseHeader(buffer));
+      //console.log(https.parseHeader(buffer));
       return;
 
       let httpInfo = httpParse(buffer);
