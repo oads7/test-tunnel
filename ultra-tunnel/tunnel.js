@@ -82,6 +82,7 @@ tunnelListener = () => {
             busy: false,
             socket,
           });
+          socket.write(getMessageResponse(200, 'CONNECTED', 'WORKS!'));
         } else {
           socket.write(getMessageResponse(400, 'BAD_REQUEST', bridgeNotExist));
           socket.destroy();
