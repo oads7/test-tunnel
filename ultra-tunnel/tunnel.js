@@ -32,6 +32,9 @@ tunnelListener = () => {
   });
 
   tunnelServer.on('connection', socket => {
+    socket.on('end', () => {
+      console.log('recibido...')
+    });
     socket.on('data', buffer => {
       console.log(buffer.toString());
 

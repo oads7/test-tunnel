@@ -1,4 +1,5 @@
 const net = require('net');
+const httpParse = require('./helpers/httpParse');
 
 let sockets = [];
 settings = {};
@@ -14,17 +15,26 @@ connectToTunnel = () => {
   const currentSocket = sockets[currentSocketOffset];
 
   currentSocket.on('data', data => {
-    connectToTunnel();
-    const backendSocket = new net.Socket;
+    const httpInfo = httpParse(data);
+    if (httpInfo.statusCode == 301) {
+      console.log('Moving: \n', data.toString())
+      const newRequest = httpRequestToEngage(httpInfo.headers.Location, settings.url);
+      console.log('New Request: \n', newRequest)
+      currentSocket.write(newRequest);
+    } else {
+      console.log('Other: \n', data.toString())
+      //connectToTunnel();
+      const backendSocket = new net.Socket;
 
-    backendSocket.on('data', response => {
-      currentSocket.write(response);
-      currentSocket.destroy();
-      sockets.splice(currentSocketOffset, 1);
-    })
-    backendSocket.connect(settings.backendPort, settings.backendUrl, () => {
-      backendSocket.write(data);
-    });
+      backendSocket.on('data', response => {
+        currentSocket.write(response);
+        currentSocket.destroy();
+        sockets.splice(currentSocketOffset, 1);
+      })
+      backendSocket.connect(settings.backendPort, settings.backendUrl, () => {
+        backendSocket.write(data);
+      });
+    }
   });
 
   /*
@@ -33,11 +43,19 @@ connectToTunnel = () => {
     : `${settings.url}/${settings.middlePoint}`;
     */
   currentSocket.connect(settings.port, settings.url, () => {
-    currentSocket.write(httpRequestToEngage())
+    const request = httpRequestToEngage(`/${settings.middlePoint}`, settings.url);
+    console.log(request)
+    currentSocket.write(request)
     console.log('Connected to the tunnel');
   })
 }
 
-httpRequestToEngage = () => {
-  return 'GET /' + settings.middlePoint + ' HTTP/1.1\r\n\r\n';
+httpRequestToEngage = (url, host) => {
+  return  'GET ' + url + ' HTTP/1.1\r\n' +
+          'Host: ' + host + '\r\n' +
+          //'Access-Control-Allow-Origin: *\r\n' +
+          //'Connection: Keep-Alive\r\n' +
+          //'Keep-Alive: 1000000\r\n' +
+          //'Content-Type: text/html\r\n' +
+          '\r\n';
 }
