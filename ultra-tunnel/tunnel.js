@@ -33,13 +33,14 @@ tunnelListener = () => {
 
   tunnelServer.on('connection', socket => {
     socket.on('data', buffer => {
+      console.log(buffer.toString());
+
       let httpInfo = httpParse(buffer);
       if (!httpInfo.httpVersion) {
         console.log(https.parseHeader(buffer));
       }
 
       console.log(httpInfo);
-      console.log(buffer.toString());
       console.log('---------------------------');
       if (!httpInfo.url) return;
 
