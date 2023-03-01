@@ -35,6 +35,9 @@ tunnelListener = () => {
     socket.on('end', () => {
       console.log('recibido...')
     });
+    socket.on('error', error => {
+      console.log('<ultra-tunnel: error>', error);
+    });
     socket.on('data', buffer => {
       console.log(buffer.toString());
 

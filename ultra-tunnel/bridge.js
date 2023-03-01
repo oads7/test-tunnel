@@ -18,9 +18,24 @@ connectToTunnel = () => {
     const httpInfo = httpParse(data);
     if (httpInfo.statusCode == 301) {
       console.log('Moving: \n', data.toString())
-      const newRequest = httpRequestToEngage(httpInfo.headers.Location, settings.url);
-      console.log('New Request: \n', newRequest)
-      currentSocket.write(newRequest);
+      //const newRequest = httpRequestToEngage(httpInfo.headers.Location, settings.url);
+      //console.log('New Request: \n', newRequest)
+      //currentSocket.write(newRequest);
+
+      const newUrl = new URL(httpInfo.headers.Location);
+      const { hostname, pathname } = newUrl;
+
+      const newClient = new net.Socket();
+      newClient.connect(80, hostname, () => {
+        const newRequest = `GET ${pathname} HTTP/1.1\r\nHost: ${hostname}\r\n\r\n`;
+        newClient.write(newRequest);
+        console.log('New Request: \n', newRequest)
+      });
+
+      newClient.on('data', newData => {
+        console.log('New DATA: \n', newData.toString());
+        // Handle the response from the new location here
+      });
     } else {
       console.log('Other: \n', data.toString())
       //connectToTunnel();
